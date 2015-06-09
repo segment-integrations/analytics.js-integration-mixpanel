@@ -1,0 +1,24 @@
+{
+  "name": "analytics.js-integration-mixpanel",
+  "repo": "segment-integrations/analytics.js-integration-mixpanel",
+  "description": "The Mixpanel analytics.js integration.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "dependencies": {
+    "segmentio/alias": "0.2.1",
+    "segmentio/convert-dates": "0.1.0",
+    "segmentio/obj-case": "0.2.1",
+    "component/each": "0.0.1",
+    "ndhoule/includes": "1.0.0",
+    "segmentio/analytics.js-integration": "0.3.x",
+    "ianstormtaylor/is": "0.1.0",
+    "segmentio/to-iso-string": "0.0.1",
+    "yields/some": "1.0.0"
+  },
+  "development": {
+    "segmentio/analytics.js": "*",
+    "segmentio/clear-env": "0.2.x",
+    "segmentio/analytics.js-integration-tester": "1.4.x"
+  }
+}
