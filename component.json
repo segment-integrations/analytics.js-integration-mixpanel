@@ -10,7 +10,7 @@
     "segmentio/convert-dates": "0.1.0",
     "segmentio/obj-case": "0.2.1",
     "component/each": "0.0.1",
-    "ndhoule/includes": "1.0.0",
+    "ndhoule/includes": "^1.0.0",
     "segmentio/analytics.js-integration": "0.3.x",
     "ianstormtaylor/is": "0.1.0",
     "segmentio/to-iso-string": "0.0.1",
