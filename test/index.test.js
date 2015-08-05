@@ -304,11 +304,6 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.track, 'event', { array: [13, 28, 99] });
       });
 
-      it('should convert arrays of objects to lengths', function() {
-        analytics.track('event', { array: [{ a: 'asdf' }, { b: 'geasd' }, { c: 'asfee' }] });
-        analytics.called(window.mixpanel.track, 'event', { array: 3 });
-      });
-
       it('should remove mixpanel\'s reserved properties', function() {
         analytics.track('event', {
           distinct_id: 'string',
