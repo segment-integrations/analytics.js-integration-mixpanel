@@ -40,6 +40,7 @@ describe('Mixpanel', function() {
       .option('nameTag', true)
       .option('pageview', false)
       .option('people', false)
+      .option('enhancedTrack', false)
       .option('token', '')
       .option('trackAllPages', false)
       .option('trackNamedPages', true));
@@ -253,6 +254,7 @@ describe('Mixpanel', function() {
     describe('#track', function() {
       beforeEach(function() {
         analytics.stub(window.mixpanel, 'track');
+        analytics.stub(window.mixpanel, 'register');
         analytics.stub(window.mixpanel.people, 'increment');
         analytics.stub(window.mixpanel.people, 'set');
         analytics.stub(window.mixpanel.people, 'track_charge');
@@ -272,6 +274,19 @@ describe('Mixpanel', function() {
         mixpanel.options.people = true;
         analytics.track('event', { revenue: 9.99 });
         analytics.called(window.mixpanel.people.track_charge, 9.99);
+      });
+
+      it('should set super properties from the props.super object', function() {
+        mixpanel.options.enhancedTrack = true;
+        analytics.track('event', { super: { 'Account Status': 'Paid' } });
+        analytics.called(window.mixpanel.register, { 'Account Status': 'Paid' });
+      });
+
+      it('should set people properties from the props.people object', function() {
+        mixpanel.options.people = true;
+        mixpanel.options.enhancedTrack = true;
+        analytics.track('event', { people: { friend: 'elmo' } });
+        analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
       });
 
       it('should convert dates to iso strings', function() {
