@@ -40,10 +40,10 @@ describe('Mixpanel', function() {
       .option('nameTag', true)
       .option('pageview', false)
       .option('people', false)
-      .option('enhancedTrack', false)
       .option('token', '')
       .option('trackAllPages', false)
-      .option('trackNamedPages', true));
+      .option('trackNamedPages', true)
+      .option('setAllTraitsByDefault', true));
   });
 
   describe('before loading', function() {
@@ -176,6 +176,28 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.people.set, { trait: true });
       });
 
+      it('should set super properties from the context.mixpanel.superProperties object if setAllTraitsByDefault is false', function() {
+        mixpanel.options.setAllTraitsByDefault = false;
+        analytics.identify(123, { accountStatus: 'Paid', subscribed: true }, { Mixpanel: { superProperties: ['accountStatus', 'subscribed'] } });
+        analytics.called(window.mixpanel.identify, 123);
+        analytics.called(window.mixpanel.register, { accountStatus: 'Paid', subscribed: true });
+      });
+
+      it('should set people properties from the context.mixpanel.peopleProperties object if setAllTraitsByDefault is false', function() {
+        mixpanel.options.people = false;
+        mixpanel.options.setAllTraitsByDefault = true;
+        analytics.identify(123, { friend: 'elmo' }, { Mixpanel: { peopleProperties: ['friend'] } });
+        analytics.called(window.mixpanel.identify, 123);
+        analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
+      });
+
+      it('shouldn\'t set people properties from the context.mixpanel.peopleProperties object if setAllTraitsByDefault is false', function() {
+        mixpanel.options.people = false;
+        mixpanel.options.setAllTraitsByDefault = false;
+        analytics.identify(123, { friend: 'elmo' });
+        analytics.called(window.mixpanel.identify, 123);
+      });
+
       it('should alias traits', function() {
         var date = new Date();
         analytics.identify({
@@ -276,16 +298,14 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.people.track_charge, 9.99);
       });
 
-      it('should set super properties from the props.super object', function() {
-        mixpanel.options.enhancedTrack = true;
-        analytics.track('event', { super: { 'Account Status': 'Paid' } });
-        analytics.called(window.mixpanel.register, { 'Account Status': 'Paid' });
+      it('should set super properties from the context.mixpanel.superProperties object', function() {
+        analytics.track('event', { accountStatus: 'Paid', subscribed: true }, { Mixpanel: { superProperties: ['accountStatus', 'subscribed'] } });
+        analytics.called(window.mixpanel.register, { accountStatus: 'Paid', subscribed: true });
       });
 
-      it('should set people properties from the props.people object', function() {
+      it('should set people properties from the context.mixpanel.peopleProperties object', function() {
         mixpanel.options.people = true;
-        mixpanel.options.enhancedTrack = true;
-        analytics.track('event', { people: { friend: 'elmo' } });
+        analytics.track('event', { friend: 'elmo' }, { Mixpanel: { peopleProperties: ['friend'] } });
         analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
       });
 
