@@ -1,4 +1,10 @@
 
+1.1.0 / 2015-08-25
+==================
+
+  * Merge pull request #6 from segment-integrations/people-super-properties
+  * added enhancedTrack support
+
 1.0.5 / 2015-08-05
 ==================
 
