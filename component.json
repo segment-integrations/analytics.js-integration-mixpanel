@@ -2,7 +2,7 @@
   "name": "analytics.js-integration-mixpanel",
   "repo": "segment-integrations/analytics.js-integration-mixpanel",
   "description": "The Mixpanel analytics.js integration.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "MIT",
   "main": "lib/index.js",
   "dependencies": {

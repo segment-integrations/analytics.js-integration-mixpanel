@@ -1,4 +1,9 @@
 
+1.2.1 / 2015-09-08
+==================
+
+  * adding check for no Mixpanel.superProperties object closes #11
+
 1.2.0 / 2015-09-08
 ==================
 
