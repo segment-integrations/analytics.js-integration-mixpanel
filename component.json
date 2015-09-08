@@ -10,6 +10,8 @@
     "segmentio/convert-dates": "0.1.0",
     "segmentio/obj-case": "0.2.1",
     "ndhoule/includes": "^1.0.0",
+    "ndhoule/pick": "^1.0.0",
+    "ianstormtaylor/is": "0.1.1",
     "segmentio/analytics.js-integration": "^1.0.0",
     "segmentio/to-iso-string": "0.0.1"
   },
