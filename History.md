@@ -1,4 +1,10 @@
 
+1.2.0 / 2015-09-08
+==================
+
+  * Allow explicit declaration of people/super properties ([More Info](https://github.com/segment-integrations/analytics.js-integration-mixpanel/pull/10))
+  * stub every possible mixpanel method
+
 1.1.0 / 2015-08-25
 ==================
 
