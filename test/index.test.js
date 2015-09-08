@@ -320,6 +320,11 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
       });
 
+      it('shouldn\'t try to register super properties if not specified', function() {
+        analytics.track('event', { friend: 'elmo' }, {});
+        analytics.didNotCall(window.mixpanel.register);
+      });
+
       it('should convert dates to iso strings', function() {
         var date = new Date();
         analytics.track('event', { date: date });
