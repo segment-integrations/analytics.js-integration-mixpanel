@@ -184,11 +184,20 @@ describe('Mixpanel', function() {
       });
 
       it('should set people properties from the context.mixpanel.peopleProperties object if setAllTraitsByDefault is false', function() {
-        mixpanel.options.people = false;
+        mixpanel.options.people = true;
         mixpanel.options.setAllTraitsByDefault = false;
         analytics.identify(123, { friend: 'elmo' }, { Mixpanel: { peopleProperties: ['friend'] } });
         analytics.called(window.mixpanel.identify, 123);
         analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
+      });
+
+      it('should set people properties from Mixpanel\'s special traits if present in Mixpanel.peopleProperties, Mixpanel People is true and setAllTraitsByDefault is false', function() {
+        mixpanel.options.people = true;
+        mixpanel.options.setAllTraitsByDefault = false;
+        analytics.identify(123, { username: 'elmo', email: 'elmo@sesa.me' }, { Mixpanel: { peopleProperties: ['username'] }});
+        analytics.called(window.mixpanel.identify, 123);
+        analytics.called(window.mixpanel.people.set, { $username: 'elmo' });
+        analytics.didNotCall(window.mixpanel.people.set, { $email: 'elmo@sesa.me' });
       });
 
       it('shouldn\'t set super properties that aren\'t included in the context.mixpanel.superProperties object when setAllTraitsByDefault is false', function() {
@@ -318,6 +327,19 @@ describe('Mixpanel', function() {
         mixpanel.options.people = true;
         analytics.track('event', { friend: 'elmo' }, { Mixpanel: { peopleProperties: ['friend'] } });
         analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
+      });
+
+      it('shouldn\'t include special traits in people properties if not specified', function() {
+        mixpanel.options.people = true;
+        analytics.track('event', { friend: 'elmo', email: 'elmo@sesa.me' }, { Mixpanel: { peopleProperties: ['friend'] } });
+        analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
+        analytics.didNotCall(window.mixpanel.people.set, { $email: 'elmo@sesa.me' });
+      });
+
+      it('should include special traits in people properties if specified', function() {
+        mixpanel.options.people = true;
+        analytics.track('event', { friend: 'elmo', email: 'elmo@sesa.me' }, { Mixpanel: { peopleProperties: ['email', 'friend'] } });
+        analytics.called(window.mixpanel.people.set, { friend: 'elmo', $email: 'elmo@sesa.me' });
       });
 
       it('shouldn\'t try to register super properties if not specified', function() {
