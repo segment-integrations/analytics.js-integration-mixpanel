@@ -176,31 +176,44 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.people.set, { trait: true });
       });
 
-      it('should set super properties from the context.mixpanel.superProperties object if setAllTraitsByDefault is false', function() {
+      it('should set super properties from the mixpanel.options.superProperties object if setAllTraitsByDefault is false', function() {
         mixpanel.options.setAllTraitsByDefault = false;
-        analytics.identify(123, { accountStatus: 'Paid', subscribed: true }, { Mixpanel: { superProperties: ['accountStatus', 'subscribed'] } });
+        mixpanel.options.superProperties = ['accountStatus', 'subscribed', 'email'];
+        analytics.identify(123, { accountStatus: 'Paid', subscribed: true, email: 'androidjones@sky.net' });
         analytics.called(window.mixpanel.identify, 123);
-        analytics.called(window.mixpanel.register, { accountStatus: 'Paid', subscribed: true });
+        analytics.called(window.mixpanel.register, { accountStatus: 'Paid', subscribed: true, $email: 'androidjones@sky.net' });
       });
 
-      it('should set people properties from the context.mixpanel.peopleProperties object if setAllTraitsByDefault is false', function() {
-        mixpanel.options.people = false;
+      it('should set people properties from the mixpanel.options.peopleProperties object if setAllTraitsByDefault is false', function() {
+        mixpanel.options.people = true;
         mixpanel.options.setAllTraitsByDefault = false;
-        analytics.identify(123, { friend: 'elmo' }, { Mixpanel: { peopleProperties: ['friend'] } });
+        mixpanel.options.peopleProperties = ['friend'];
+        analytics.identify(123, { friend: 'elmo' });
         analytics.called(window.mixpanel.identify, 123);
         analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
       });
 
-      it('shouldn\'t set super properties that aren\'t included in the context.mixpanel.superProperties object when setAllTraitsByDefault is false', function() {
+      it('should set people properties from the Mixpanel\'s special traits if setAllTraitsByDefault is false and the property isn\'t on the call', function() {
+        mixpanel.options.people = true;
         mixpanel.options.setAllTraitsByDefault = false;
-        analytics.identify(123, { accountStatus: 'Paid', subscribed: true }, { Mixpanel: { superProperties: ['accountStatus'] } });
+        mixpanel.options.peopleProperties = ['friend'];
+        analytics.identify(123, { friend: 'elmo', email: 'dog@dog.com' });
+        analytics.called(window.mixpanel.identify, 123);
+        analytics.called(window.mixpanel.people.set, { friend: 'elmo', $email: 'dog@dog.com' });
+      });
+
+
+      it('shouldn\'t set super properties that aren\'t included in the mixpanel.options.superProperties object when setAllTraitsByDefault is false', function() {
+        mixpanel.options.setAllTraitsByDefault = false;
+        mixpanel.options.superProperties = ['accountStatus'];
+        analytics.identify(123, { accountStatus: 'Paid', subscribed: true });
         analytics.called(window.mixpanel.identify, 123);
         analytics.called(window.mixpanel.register, { accountStatus: 'Paid' });
         analytics.didNotCall(window.mixpanel.register, { subscribed: true });
       });
 
 
-      it('shouldn\'t set people properties from the context.mixpanel.peopleProperties object if setAllTraitsByDefault is false', function() {
+      it('shouldn\'t set people properties from the mixpanel.options.peopleProperties object if setAllTraitsByDefault is false', function() {
         mixpanel.options.people = false;
         mixpanel.options.setAllTraitsByDefault = false;
         analytics.identify(123, { friend: 'elmo' });
@@ -309,19 +322,29 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.people.track_charge, 9.99);
       });
 
-      it('should set super properties from the context.mixpanel.superProperties object', function() {
-        analytics.track('event', { accountStatus: 'Paid', subscribed: true }, { Mixpanel: { superProperties: ['accountStatus', 'subscribed'] } });
-        analytics.called(window.mixpanel.register, { accountStatus: 'Paid', subscribed: true });
+      it('should set super properties from the mixpanel.options.superProperties object', function() {
+        mixpanel.options.superProperties = ['accountStatus', 'subscribed', 'email'];
+        analytics.track('event', { accountStatus: 'Paid', subscribed: true, email: 'androidjones@sky.net' });
+        analytics.called(window.mixpanel.register, { accountStatus: 'Paid', subscribed: true, $email: 'androidjones@sky.net' });
       });
 
-      it('should set people properties from the context.mixpanel.peopleProperties object', function() {
+      it('should set people properties from the mixpanl.options.peopleProperties object', function() {
         mixpanel.options.people = true;
-        analytics.track('event', { friend: 'elmo' }, { Mixpanel: { peopleProperties: ['friend'] } });
+        mixpanel.options.peopleProperties = ['friend'];
+        analytics.track('event', { friend: 'elmo' });
         analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
       });
 
+      it('should set people properties from the Mixpanel\'s special traits', function() {
+        mixpanel.options.people = true;
+        mixpanel.options.peopleProperties = ['friend'];
+        analytics.track('event', { friend: 'elmo', email: 'dog@dog.com' });
+        analytics.called(window.mixpanel.people.set, { friend: 'elmo', $email: 'dog@dog.com' });
+      });
+
       it('shouldn\'t try to register super properties if not specified', function() {
-        analytics.track('event', { friend: 'elmo' }, {});
+        mixpanel.options.superProperties = [];
+        analytics.track('event', { friend: 'elmo' });
         analytics.didNotCall(window.mixpanel.register);
       });
 
