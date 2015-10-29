@@ -90,6 +90,7 @@ describe('Mixpanel', function() {
     describe('#page', function() {
       beforeEach(function() {
         analytics.stub(window.mixpanel, 'track');
+        analytics.stub(window.mixpanel.people, 'set');
       });
 
       it('should not track anonymous pages by default', function() {
@@ -106,6 +107,13 @@ describe('Mixpanel', function() {
       it('should track named pages by default', function() {
         analytics.page('Name');
         analytics.called(window.mixpanel.track, 'Viewed Name Page');
+      });
+
+      it('will not track page props as a people property', function() {
+        mixpanel.options.people = true;
+        analytics.page('Name');
+        analytics.called(window.mixpanel.track, 'Viewed Name Page');
+        analytics.didNotCall(window.mixpanel.people.set, { $name: 'Name' });
       });
 
       it('should track named pages with categories', function() {
@@ -326,26 +334,6 @@ describe('Mixpanel', function() {
         mixpanel.options.superProperties = ['accountStatus', 'subscribed', 'email'];
         analytics.track('event', { accountStatus: 'Paid', subscribed: true, email: 'androidjones@sky.net' });
         analytics.called(window.mixpanel.register, { accountStatus: 'Paid', subscribed: true, $email: 'androidjones@sky.net' });
-      });
-
-      it('should set people properties from the mixpanl.options.peopleProperties object', function() {
-        mixpanel.options.people = true;
-        mixpanel.options.peopleProperties = ['friend'];
-        analytics.track('event', { friend: 'elmo' });
-        analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
-      });
-
-      it('should set people properties from the Mixpanel\'s special traits', function() {
-        mixpanel.options.people = true;
-        mixpanel.options.peopleProperties = ['friend'];
-        analytics.track('event', { friend: 'elmo', email: 'dog@dog.com' });
-        analytics.called(window.mixpanel.people.set, { friend: 'elmo', $email: 'dog@dog.com' });
-      });
-
-      it('shouldn\'t try to register super properties if not specified', function() {
-        mixpanel.options.superProperties = [];
-        analytics.track('event', { friend: 'elmo' });
-        analytics.didNotCall(window.mixpanel.register);
       });
 
       it('should convert dates to iso strings', function() {
