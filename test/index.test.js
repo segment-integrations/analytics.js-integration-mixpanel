@@ -90,6 +90,7 @@ describe('Mixpanel', function() {
     describe('#page', function() {
       beforeEach(function() {
         analytics.stub(window.mixpanel, 'track');
+        analytics.stub(window.mixpanel.people, 'set');
       });
 
       it('should not track anonymous pages by default', function() {
@@ -124,6 +125,14 @@ describe('Mixpanel', function() {
         analytics.page('Name');
         analytics.page('Category', 'Name');
         analytics.didNotCall(window.mixpanel.track);
+      });
+
+      // Exercise a bug where we set people properties in track calls. https://segment.phacility.com/T903
+      it('will not track page props as a people property', function() {
+        mixpanel.options.people = true;
+        analytics.page('Name');
+        analytics.called(window.mixpanel.track, 'Viewed Name Page');
+        analytics.didNotCall(window.mixpanel.people.set, { $name: 'Name' });
       });
     });
 
@@ -211,7 +220,6 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.register, { accountStatus: 'Paid' });
         analytics.didNotCall(window.mixpanel.register, { subscribed: true });
       });
-
 
       it('shouldn\'t set people properties from the mixpanel.options.peopleProperties object if setAllTraitsByDefault is false', function() {
         mixpanel.options.people = false;
@@ -325,23 +333,26 @@ describe('Mixpanel', function() {
       it('should set super properties from the mixpanel.options.superProperties object', function() {
         mixpanel.options.superProperties = ['accountStatus', 'subscribed', 'email'];
         analytics.track('event', { accountStatus: 'Paid', subscribed: true, email: 'androidjones@sky.net' });
-        analytics.called(window.mixpanel.register, { accountStatus: 'Paid', subscribed: true, $email: 'androidjones@sky.net' });
+        analytics.called(window.mixpanel.register, { accountStatus: 'Paid', subscribed: true, email: 'androidjones@sky.net' });
       });
 
-      it('should set people properties from the mixpanl.options.peopleProperties object', function() {
+      // Exercise a bug where we set people properties in track calls. https://segment.phacility.com/T903
+      it('should not set people properties from the mixpanl.options.peopleProperties object', function() {
         mixpanel.options.people = true;
         mixpanel.options.peopleProperties = ['friend'];
         analytics.track('event', { friend: 'elmo' });
-        analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
+        analytics.didNotCall(window.mixpanel.people.set);
       });
 
-      it('should set people properties from the Mixpanel\'s special traits', function() {
+      // Exercise a bug where we set people properties in track calls. https://segment.phacility.com/T903
+      it('should not set people properties from the Mixpanel\'s special traits', function() {
         mixpanel.options.people = true;
         mixpanel.options.peopleProperties = ['friend'];
         analytics.track('event', { friend: 'elmo', email: 'dog@dog.com' });
-        analytics.called(window.mixpanel.people.set, { friend: 'elmo', $email: 'dog@dog.com' });
+        analytics.didNotCall(window.mixpanel.people.set);
       });
 
+      // Exercise a bug where we set people properties in track calls. https://segment.phacility.com/T903
       it('shouldn\'t try to register super properties if not specified', function() {
         mixpanel.options.superProperties = [];
         analytics.track('event', { friend: 'elmo' });
