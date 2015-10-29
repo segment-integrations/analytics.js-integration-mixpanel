@@ -1,4 +1,9 @@
 
+1.3.1 / 2015-10-29
+==================
+
+  * Dont set peopleProperties in track calls. Dont map special traits in track, people should use identify instead.
+
 1.3.0 / 2015-10-27
 ==================
 
