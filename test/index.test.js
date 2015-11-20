@@ -13,7 +13,8 @@ describe('Mixpanel', function() {
     token: 'x',
     cookieName: 'y',
     crossSubdomainCookie: true,
-    secureCookie: true
+    secureCookie: true,
+    persistence: 'localStorage'
   };
 
   beforeEach(function() {
