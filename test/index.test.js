@@ -13,8 +13,7 @@ describe('Mixpanel', function() {
     token: 'x',
     cookieName: 'y',
     crossSubdomainCookie: true,
-    secureCookie: true,
-    persistence: 'localStorage'
+    secureCookie: true
   };
 
   beforeEach(function() {
@@ -43,6 +42,7 @@ describe('Mixpanel', function() {
       .option('people', false)
       .option('token', '')
       .option('trackAllPages', false)
+      .option('persistence', 'cookie')
       .option('trackNamedPages', true)
       .option('setAllTraitsByDefault', true));
   });
