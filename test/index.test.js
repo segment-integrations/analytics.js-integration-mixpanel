@@ -42,6 +42,7 @@ describe('Mixpanel', function() {
       .option('people', false)
       .option('token', '')
       .option('trackAllPages', false)
+      .option('persistence', 'cookie')
       .option('trackNamedPages', true)
       .option('setAllTraitsByDefault', true));
   });
