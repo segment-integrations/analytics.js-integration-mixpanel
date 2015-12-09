@@ -13,7 +13,8 @@
     "ndhoule/pick": "^1.0.0",
     "ianstormtaylor/is": "0.1.1",
     "segmentio/analytics.js-integration": "^1.0.0",
-    "segmentio/to-iso-string": "0.0.1"
+    "segmentio/to-iso-string": "0.0.1",
+    "component/indexof": "~0.0.3"
   },
   "development": {
     "segmentio/analytics.js-core": "^2.10.0",
