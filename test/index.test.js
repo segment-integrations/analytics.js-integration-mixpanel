@@ -44,7 +44,8 @@ describe('Mixpanel', function() {
       .option('trackAllPages', false)
       .option('persistence', 'cookie')
       .option('trackNamedPages', true)
-      .option('setAllTraitsByDefault', true));
+      .option('setAllTraitsByDefault', true)
+      .option('trackCategorizedPages', true));
   });
 
   describe('before loading', function() {
@@ -117,7 +118,10 @@ describe('Mixpanel', function() {
 
       it('should track categorized pages by default', function() {
         analytics.page('Category', 'Name');
-        analytics.called(window.mixpanel.track, 'Viewed Category Page');
+        // This test was incorrectly testing this before, as it was passing based on the multiple call sending bug. The correct new call would be the following as noted in our docs:
+        analytics.called(window.mixpanel.track, 'Viewed Category Name Page');
+        analytics.didNotCall(window.mixpanel.track, 'Viewed Category Page');
+        analytics.didNotCall(window.mixpanel.track, 'Viewed Name Page');
       });
 
       it('should not track category pages when the option is off', function() {
@@ -134,6 +138,14 @@ describe('Mixpanel', function() {
         analytics.page('Name');
         analytics.called(window.mixpanel.track, 'Viewed Name Page');
         analytics.didNotCall(window.mixpanel.people.set, { $name: 'Name' });
+      });
+
+      it('should not send multiple page calls', function() {
+        mixpanel.options.trackAllPages = true;
+        mixpanel.options.trackNamedPages = true;
+        analytics.page('Teemo');
+        analytics.called(window.mixpanel.track, 'Loaded a Page');
+        analytics.didNotCall(window.mixpanel.track, 'Viewed Teemo Page');
       });
     });
 
