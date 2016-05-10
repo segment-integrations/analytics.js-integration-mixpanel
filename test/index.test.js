@@ -13,7 +13,10 @@ describe('Mixpanel', function() {
     token: 'x',
     cookieName: 'y',
     crossSubdomainCookie: true,
-    secureCookie: true
+    secureCookie: true,
+    consolidatedPageCalls: false,
+    trackCategorizedPages: true,
+    trackNamedPages: true
   };
 
   beforeEach(function() {
@@ -43,9 +46,10 @@ describe('Mixpanel', function() {
       .option('token', '')
       .option('trackAllPages', false)
       .option('persistence', 'cookie')
-      .option('trackNamedPages', true)
+      .option('trackNamedPages', false)
+      .option('consolidatedPageCalls', true)
       .option('setAllTraitsByDefault', true)
-      .option('trackCategorizedPages', true));
+      .option('trackCategorizedPages', false));
   });
 
   describe('before loading', function() {
@@ -143,6 +147,14 @@ describe('Mixpanel', function() {
       it('should not send multiple page calls', function() {
         mixpanel.options.trackAllPages = true;
         mixpanel.options.trackNamedPages = true;
+        analytics.page('Teemo');
+        analytics.called(window.mixpanel.track, 'Loaded a Page');
+        analytics.didNotCall(window.mixpanel.track, 'Viewed Teemo Page');
+      });
+
+      // consolidatedPageCalls = true
+      it('should not send multiple page calls', function() {
+        mixpanel.options.consolidatedPageCalls = true;
         analytics.page('Teemo');
         analytics.called(window.mixpanel.track, 'Loaded a Page');
         analytics.didNotCall(window.mixpanel.track, 'Viewed Teemo Page');
