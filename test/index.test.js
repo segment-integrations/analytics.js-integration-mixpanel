@@ -156,7 +156,14 @@ describe('Mixpanel', function() {
       it('should not send multiple page calls', function() {
         mixpanel.options.consolidatedPageCalls = true;
         analytics.page('Teemo');
-        analytics.called(window.mixpanel.track, 'Loaded a Page');
+        analytics.called(window.mixpanel.track, 'Loaded a Page', {
+          name: 'Teemo',
+          path: '/test/',
+          referrer: '',
+          search: '',
+          title: 'integrations tests',
+          url: window.location.href
+        });
         analytics.didNotCall(window.mixpanel.track, 'Viewed Teemo Page');
       });
     });
