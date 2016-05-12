@@ -1,3 +1,9 @@
+
+1.5.0 / 2016-05-12
+==================
+
+  * Update Page Call Logic with consolidatedPageCalls setting
+
 1.4.2 / 2016-05-07
 ==================
 
