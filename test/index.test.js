@@ -1,9 +1,10 @@
+'use strict';
 
-var Analytics = require('analytics.js-core').constructor;
-var integration = require('analytics.js-integration');
-var iso = require('to-iso-string');
-var sandbox = require('clear-env');
-var tester = require('analytics.js-integration-tester');
+var Analytics = require('@segment/analytics.js-core').constructor;
+var integration = require('@segment/analytics.js-integration');
+var iso = require('@segment/to-iso-string');
+var sandbox = require('@segment/clear-env');
+var tester = require('@segment/analytics.js-integration-tester');
 var Mixpanel = require('../lib/');
 
 describe('Mixpanel', function() {
@@ -158,10 +159,10 @@ describe('Mixpanel', function() {
         analytics.page('Teemo');
         analytics.called(window.mixpanel.track, 'Loaded a Page', {
           name: 'Teemo',
-          path: '/test/',
-          referrer: '',
+          path: '/context.html',
+          referrer: document.referrer, 
           search: '',
-          title: 'integrations tests',
+          title: document.title, 
           url: window.location.href
         });
         analytics.didNotCall(window.mixpanel.track, 'Viewed Teemo Page');
