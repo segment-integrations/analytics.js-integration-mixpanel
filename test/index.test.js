@@ -244,6 +244,14 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.people.append, { friends: 'elmo', bands: 'Stix' });
       });
 
+      it('should not append people properties that are not in the mixpanel.options.appendPeopleProperties object', function() {
+        mixpanel.options.people = true;
+        mixpanel.options.appendPeopleProperties = ['friends', 'bands'];
+        analytics.identify(123, { friends: 'elmo', bands: 'Stix', gender: 'male' });
+        analytics.called(window.mixpanel.identify, 123);
+        analytics.called(window.mixpanel.people.append, { friends: 'elmo', bands: 'Stix' });
+      });
+
       it('should append people properties from the Mixpanel\'s special traits if setAllTraitsByDefault is false and the property isn\'t on the call', function() {
         mixpanel.options.people = true;
         mixpanel.options.setAllTraitsByDefault = false;
