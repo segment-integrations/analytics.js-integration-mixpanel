@@ -175,6 +175,7 @@ describe('Mixpanel', function() {
         analytics.stub(window.mixpanel, 'register');
         analytics.stub(window.mixpanel, 'name_tag');
         analytics.stub(window.mixpanel.people, 'set');
+        analytics.stub(window.mixpanel.people, 'append');
       });
 
       it('should send an id', function() {
@@ -235,7 +236,15 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.people.set, { friend: 'elmo' });
       });
 
-      it('should set people properties from the Mixpanel\'s special traits if setAllTraitsByDefault is false and the property isn\'t on the call', function() {
+      it('should append people properties from the mixpanel.options.appendPeopleProperties object', function() {
+        mixpanel.options.people = true;
+        mixpanel.options.appendPeopleProperties = ['friends', 'bands'];
+        analytics.identify(123, { friends: 'elmo', bands: 'Stix' });
+        analytics.called(window.mixpanel.identify, 123);
+        analytics.called(window.mixpanel.people.append, { friends: 'elmo', bands: 'Stix' });
+      });
+
+      it('should append people properties from the Mixpanel\'s special traits if setAllTraitsByDefault is false and the property isn\'t on the call', function() {
         mixpanel.options.people = true;
         mixpanel.options.setAllTraitsByDefault = false;
         mixpanel.options.peopleProperties = ['friend'];
@@ -243,7 +252,6 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.identify, 123);
         analytics.called(window.mixpanel.people.set, { friend: 'elmo', $email: 'dog@dog.com' });
       });
-
 
       it('shouldn\'t set super properties that aren\'t included in the mixpanel.options.superProperties object when setAllTraitsByDefault is false', function() {
         mixpanel.options.setAllTraitsByDefault = false;
