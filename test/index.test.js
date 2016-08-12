@@ -94,6 +94,14 @@ describe('Mixpanel', function() {
       analytics.page();
     });
 
+    describe('config', function() {
+      it('should tag mp_lib as Segment: web', function() {
+        analytics.initialize();
+        analytics.page();
+        analytics.assert(window.mixpanel.config.loaded.toString().slice(98, -2), 'mixpanel.register({"mp_lib":"Segment: web"})');
+      });
+    });
+
     describe('#page', function() {
       beforeEach(function() {
         analytics.stub(window.mixpanel, 'track');
@@ -160,9 +168,9 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.track, 'Loaded a Page', {
           name: 'Teemo',
           path: '/context.html',
-          referrer: document.referrer, 
+          referrer: document.referrer,
           search: '',
-          title: document.title, 
+          title: document.title,
           url: window.location.href
         });
         analytics.didNotCall(window.mixpanel.track, 'Viewed Teemo Page');
