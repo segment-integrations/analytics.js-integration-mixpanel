@@ -72,11 +72,11 @@ describe('Mixpanel', function() {
         analytics.called(mixpanel.load);
       });
 
-      it('should lowercase increments', function() {
-        mixpanel.options.increments = ['A', 'b', 'c_'];
+      it('should lowercase event increments', function() {
+        mixpanel.options.eventIncrements = ['A', 'b', 'c_'];
         analytics.initialize();
         analytics.page();
-        analytics.deepEqual(mixpanel.options.increments, ['a', 'b', 'c_']);
+        analytics.deepEqual(mixpanel.options.eventIncrements, ['a', 'b', 'c_']);
       });
     });
   });
@@ -183,6 +183,7 @@ describe('Mixpanel', function() {
         analytics.stub(window.mixpanel, 'register');
         analytics.stub(window.mixpanel, 'name_tag');
         analytics.stub(window.mixpanel.people, 'set');
+        analytics.stub(window.mixpanel.people, 'union');
       });
 
       it('should send an id', function() {
@@ -309,11 +310,11 @@ describe('Mixpanel', function() {
           phone: 'phone'
         });
         analytics.called(window.mixpanel.people.set, {
-          $created: date,
+          $created: iso(date),
           $email: 'name@example.com',
           $first_name: 'first',
           $last_name: 'last',
-          $last_seen: date,
+          $last_seen: iso(date),
           $name: 'name',
           $username: 'username',
           $phone: 'phone'
@@ -334,14 +335,36 @@ describe('Mixpanel', function() {
           phone: 'phone'
         });
         analytics.called(window.mixpanel.people.set, {
-          $created: date,
+          $created: iso(date),
           $email: 'name@example.com',
           $first_name: 'first',
           $last_name: 'last',
-          $last_seen: date,
+          $last_seen: iso(date),
           $name: 'name',
           $username: 'username',
           $phone: 'phone'
+        });
+      });
+
+      it('should union arrays', function() {
+        mixpanel.options.people = true;
+        analytics.identify({
+          pages_visited: ['homepage']
+        });
+        analytics.called(window.mixpanel.people.union, {
+          pages_visited: ['homepage']
+        });
+      });
+
+      it('should union arrays when setAllTraitsByDefault is false', function() {
+        mixpanel.options.setAllTraitsByDefault = false;
+        mixpanel.options.people = true;
+        mixpanel.options.peopleProperties = ['pages_visited'];  // eslint-disable-line
+        analytics.identify({
+          pages_visited: ['homepage']
+        });
+        analytics.called(window.mixpanel.people.union, {
+          pages_visited: ['homepage']
         });
       });
     });
@@ -406,15 +429,22 @@ describe('Mixpanel', function() {
         analytics.called(window.mixpanel.track, 'event', { date: iso(date) });
       });
 
+      it('should convert dates inside lists to iso strings', function() {
+        var date = new Date();
+        var date2 = new Date();
+        analytics.track('event', { dates: [date, date2] });
+        analytics.called(window.mixpanel.track, 'event', { dates: [iso(date), iso(date2)] });
+      });
+
       it('should increment events that are in .increments option', function() {
-        mixpanel.options.increments = [0, 'my event', 1];
+        mixpanel.options.eventIncrements = [0, 'my event', 1];
         mixpanel.options.people = true;
         analytics.track('my event');
         analytics.called(window.mixpanel.people.increment, 'my event');
       });
 
       it('should should update people property if the event is in .increments', function() {
-        mixpanel.options.increments = ['event'];
+        mixpanel.options.eventIncrements = ['event'];
         mixpanel.options.people = true;
         analytics.track('event');
         var date = window.mixpanel.people.set.args[0][1];
@@ -439,6 +469,28 @@ describe('Mixpanel', function() {
           token: 'string'
         });
         analytics.called(window.mixpanel.track, 'event', {});
+      });
+
+      it('should invert object list properties', function() {
+        analytics.track('event', {
+          products: [
+            { price: 32, sku: 25 },
+            { price: 33, sku: 29 }
+          ]
+        });
+        analytics.called(window.mixpanel.track, 'event', {
+          products_skus: [25, 29],
+          products_prices: [32, 33]
+        });
+      });
+
+      it('should increment properties when specified', function() {
+        mixpanel.options.propIncrements = ['videos_watched'];
+        mixpanel.options.people = true;
+        analytics.track('event', {
+          videos_watched: 3 
+        });
+        analytics.called(window.mixpanel.people.increment, 'videos_watched', 3);
       });
     });
 
