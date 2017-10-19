@@ -1,4 +1,11 @@
 
+3.0.0 / 2017-10-19
+==================
+
+  * Parity rewrite (#29)
+  * Bump a.js-int-tester version to ^3.1.0 (#28)
+  * Pin karma, karma-mocha dev dependencies (#27)
+
 2.2.0 / 2016-08-16
 ==================
 
