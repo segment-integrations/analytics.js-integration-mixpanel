@@ -1,3 +1,7 @@
+3.0.1 / 2018-07-18
+==================
+  * Supports mapping to settings.sourceName on `track` and `page` calls (#32)
+  * Fix flaky tests (#31)
 
 3.0.0 / 2017-10-19
 ==================
