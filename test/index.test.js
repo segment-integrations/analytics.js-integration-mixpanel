@@ -50,7 +50,8 @@ describe('Mixpanel', function() {
       .option('trackNamedPages', false)
       .option('consolidatedPageCalls', true)
       .option('setAllTraitsByDefault', true)
-      .option('trackCategorizedPages', false));
+      .option('trackCategorizedPages', false)
+      .option('sourceName', ''));
   });
 
   describe('before loading', function() {
@@ -491,6 +492,16 @@ describe('Mixpanel', function() {
           videos_watched: 3
         });
         analytics.called(window.mixpanel.people.increment, 'videos_watched', 3);
+      });
+
+      it('should send sourceName if specified', function() {
+        mixpanel.options.sourceName = 'ios_prod';
+        analytics.track('event', {
+          segment_source_name: 'ios_prod'
+        });
+        analytics.called(window.mixpanel.track, 'event', {
+          segment_source_name: 'ios_prod'
+        });
       });
     });
 
