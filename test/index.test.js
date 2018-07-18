@@ -448,7 +448,7 @@ describe('Mixpanel', function() {
         mixpanel.options.people = true;
         analytics.track('event');
         var date = window.mixpanel.people.set.args[0][1];
-        analytics.assert(date.getTime() === new Date().getTime());
+        analytics.assert(new Date().getTime() - date.getTime() < 1000);
         analytics.called(window.mixpanel.people.increment, 'event');
         analytics.called(window.mixpanel.people.set, 'Last event', date);
       });
@@ -488,7 +488,7 @@ describe('Mixpanel', function() {
         mixpanel.options.propIncrements = ['videos_watched'];
         mixpanel.options.people = true;
         analytics.track('event', {
-          videos_watched: 3 
+          videos_watched: 3
         });
         analytics.called(window.mixpanel.people.increment, 'videos_watched', 3);
       });
