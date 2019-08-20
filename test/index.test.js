@@ -297,6 +297,30 @@ describe('Mixpanel', function() {
         });
       });
 
+      it('should alias CapitalCase traits', function() {
+        var date = new Date();
+        analytics.identify({
+          Created: date,
+          Email: 'name@example.com',
+          FirstName: 'first',
+          LastName: 'last',
+          LastSeen: date,
+          Name: 'name',
+          Username: 'username',
+          Phone: 'phone'
+        });
+        analytics.called(window.mixpanel.register, {
+          $created: iso(date),
+          $email: 'name@example.com',
+          $first_name: 'first',
+          $last_name: 'last',
+          $last_seen: iso(date),
+          $name: 'name',
+          $username: 'username',
+          $phone: 'phone'
+        });
+      });
+
       it('should alias traits to Mixpanel People', function() {
         mixpanel.options.people = true;
         var date = new Date();
@@ -309,6 +333,31 @@ describe('Mixpanel', function() {
           name: 'name',
           username: 'username',
           phone: 'phone'
+        });
+        analytics.called(window.mixpanel.people.set, {
+          $created: iso(date),
+          $email: 'name@example.com',
+          $first_name: 'first',
+          $last_name: 'last',
+          $last_seen: iso(date),
+          $name: 'name',
+          $username: 'username',
+          $phone: 'phone'
+        });
+      });
+
+      it('should alias CapitalCase traits to Mixpanel People', function() {
+        mixpanel.options.people = true;
+        var date = new Date();
+        analytics.identify({
+          Created: date,
+          Email: 'name@example.com',
+          FirstName: 'first',
+          LastName: 'last',
+          LastSeen: date,
+          Name: 'name',
+          Username: 'username',
+          Phone: 'phone'
         });
         analytics.called(window.mixpanel.people.set, {
           $created: iso(date),
